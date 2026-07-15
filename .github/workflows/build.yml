@@ -1,0 +1,52 @@
+name: Build Kernel
+on: 
+  workflow_dispatch:
+    inputs:
+      LineageOS_Version:
+        description: LineageOS Version
+        required: true
+        type: string
+jobs:
+  build: 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Configure Git
+        run: |
+          git config --global user.name "JackyLu0520"
+          git config --global user.name "JackyLu0520"
+      
+      - name: Install dependencies
+        run: |
+          sudo apt update && sudo apt upgrade -y
+          sudo apt install -y python3 git curl
+      
+      - name: Checkout defconfig
+        uses: actions/checkout@v7
+        with:
+          path: defconfig
+          fetch-depth: 0
+
+      - name: Checkout kernel source
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_kernel_oneplus_sm8750
+          path: kernel
+          fetch-depth: 0
+          ref: lineage-{{github.event.inputs.LineageOS_Version}}
+      
+      - name: Checkout Clang
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b
+          path: clang
+          fetch-depth: 0
+          ref: lineage-{{github.event.inputs.LineageOS_Version}}
+      
+      - name: Init
+        run: |
+          cd kernel
+          make mrproper
+          mkdir -p out
+          cp ../defconfig/erhai_defconfig arch/arm64/configs
+          make O=out ARCH=arm64 erhai_defconfig
+

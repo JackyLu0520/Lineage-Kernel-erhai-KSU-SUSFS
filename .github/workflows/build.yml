@@ -32,7 +32,7 @@ jobs:
           repository: LineageOS/android_kernel_oneplus_sm8750
           path: kernel
           fetch-depth: 0
-          ref: lineage-{{github.event.inputs.LineageOS_Version}}
+          ref: lineage-${{github.event.inputs.LineageOS_Version}}
       
       - name: Checkout Clang
         uses: actions/checkout@v7
@@ -40,7 +40,7 @@ jobs:
           repository: LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b
           path: clang
           fetch-depth: 0
-          ref: lineage-{{github.event.inputs.LineageOS_Version}}
+          ref: lineage-${{github.event.inputs.LineageOS_Version}}
       
       - name: Init
         run: |

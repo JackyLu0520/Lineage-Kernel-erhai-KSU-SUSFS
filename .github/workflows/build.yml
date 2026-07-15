@@ -41,6 +41,14 @@ jobs:
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
       
+      - name: Checkout sm8750-modules
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_kernel_oneplus_sm8750-modules
+          path: kernel/sm8750-modules
+          fetch-depth: 0
+          ref: lineage-${{github.event.inputs.LineageOS_Version}}
+
       - name: Init
         run: |
           cd kernel

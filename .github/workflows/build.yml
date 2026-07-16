@@ -85,7 +85,7 @@ jobs:
       - name: Fix certs/extract-cert.c(Temporarily?)
         run: |
           sudo apt install unifdef
-          unifdef -DUSE_PKCS11_ENGINE kernel/certs/extract-cert.c
+          unifdef -DUSE_PKCS11_ENGINE kernel/certs/extract-cert.c -o kernel/certs/extract-cert.c
       
       - name: Build Kernel
         run: |

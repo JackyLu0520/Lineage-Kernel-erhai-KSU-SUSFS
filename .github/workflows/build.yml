@@ -78,6 +78,12 @@ jobs:
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
 
+      - name: Set permissions
+        run: |
+          chmod +755 -R kernel
+          chmod +755 -R sm8750-modules
+          chmod +755 -R sm8750-devicetrees
+
       - name: Fix kernel/sched/walt/walt_halt.c(Temporarily?)
         run: |
           sed -i 's/#include <walt.h>/#include "walt.h"/' kernel/kernel/sched/walt/walt_halt.c

@@ -93,6 +93,10 @@ jobs:
           ls -la kernel/certs/
           unifdef -DUSE_PKCS11_ENGINE kernel/certs/extract-cert.c -o kernel/certs/extract-cert.c || case $? in 2) false;; *) true;; esac
       
+      - name: Fix drivers/clk/qcom/reset.c(Temporarily?)
+        run: |
+          sed -i 's/#include <reset.h>/#include "reset.h"/' kernel/drivers/clk/qcom/reset.c
+      
       - name: Build Kernel
         run: |
           export USE_CCACHE=1

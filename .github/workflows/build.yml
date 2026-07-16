@@ -104,7 +104,7 @@ jobs:
             CROSS_COMPILE_ARM32=$GCCDIR32/bin/arm-linux-androideabi- \
             CLANG_TRIPLE=aarch64-linux-gnu-"
 
-          make ${args} erhai_config
+          make ${args} erhai_defconfig
 
           make ${args} -j4
       

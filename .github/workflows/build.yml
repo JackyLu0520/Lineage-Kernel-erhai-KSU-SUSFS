@@ -19,7 +19,7 @@ jobs:
         run: |
           sudo apt remove firefox google-chrome-stable
           sudo apt update && sudo apt upgrade -y
-          sudo apt-get install -y git ccache make flex bison bc cpio \
+          sudo apt install -y git ccache make flex bison bc cpio \
           python3 python3-dev python-is-python3 \
           build-essential curl libssl-dev libelf-dev libdw-dev \
           zip unzip device-tree-compiler libncurses5 \
@@ -62,11 +62,7 @@ jobs:
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
 
-      - name: Setup envs
-        run: |
-          export PATH=$PWD/clang/bin:$PATH
-
-      - name: Init
+      - name: Build Kernel
         run: |
           export USE_CCACHE=1
           export CCACHE_EXEC=/usr/bin/ccache
@@ -76,9 +72,7 @@ jobs:
           make mrproper
           cp ../defconfig/erhai_defconfig arch/arm64/configs
           make ARCH=arm64 erhai_defconfig
-      
-      - name: Build Kernel
-        run: |
+
           make \
             ARCH=arm64 \
             PATH=$PWD/../clang/bin:$PATH \

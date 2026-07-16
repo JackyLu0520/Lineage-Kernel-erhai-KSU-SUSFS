@@ -22,15 +22,31 @@ jobs:
           sudo apt install -y git ccache make flex bison bc cpio \
           python3 python3-dev python-is-python3 \
           build-essential curl libssl-dev libelf-dev libdw-dev \
-          zip unzip device-tree-compiler libncurses5 \
-          gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
+          zip unzip device-tree-compiler libncurses5
       
-      - name: Setup Clang
-        run: |
-          mkdir -p clang
-          cd clang
-          curl -L https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+archive/refs/heads/main/clang-r522817.tar.gz | tar -xz
-          cd ..
+      - name: Setup clang
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b
+          path: clang
+          fetch-depth: 0
+          ref: lineage-20.0
+
+      - name: Setup gcc
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9
+          path: gcc
+          fetch-depth: 0
+          ref: lineage-19.1
+      
+      - name: Setup gcc32
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_prebuilts_gcc_linux-x86_arm_arm-linux-androideabi-4.9
+          path: gcc32
+          fetch-depth: 0
+          ref: lineage-19.1
       
       - name: Checkout defconfig
         uses: actions/checkout@v7
@@ -62,9 +78,9 @@ jobs:
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
 
-      - name: Fix kernel/sched/walt/walt_halt.c(Temporarily?)
-        run: |
-          sed -i 's/#include <walt.h>/#include "walt.h"/' kernel/kernel/sched/walt/walt_halt.c
+      # - name: Fix kernel/sched/walt/walt_halt.c(Temporarily?)
+      #   run: |
+      #     sed -i 's/#include <walt.h>/#include "walt.h"/' kernel/kernel/sched/walt/walt_halt.c
       
       - name: Build Kernel
         run: |
@@ -72,20 +88,25 @@ jobs:
           export CCACHE_EXEC=/usr/bin/ccache
           ccache -M 4G
 
+          CLANGDIR=$PWD/clang
+          GCCDIR=$PWD/gcc
+          GCCDIR32=$PWD/gcc32
+
           cd kernel
           make mrproper
           cp ../defconfig/erhai_defconfig arch/arm64/configs
-          make ARCH=arm64 erhai_defconfig
 
-          make \
-            ARCH=arm64 \
-            PATH=$PWD/../clang/bin:$PATH \
-            LD_LIBRARY_PATH=$PWD/../clang/lib \
+          args="ARCH=arm64 \
+            PATH=$CLANGDIR/bin:$GCCDIR/bin:$PATH \
+            LD_LIBRARY_PATH=$CLANGDIR/lib \
             LLVM=1 \
-            CROSS_COMPILE=aarch64-linux-android- \
-            CROSS_COMPILE_ARM32=arm-linux-androideabi- \
-            CLANG_TRIPLE=aarch64-linux-gnu- \
-            -j4
+            CROSS_COMPILE=$GCCDIR/bin/aarch64-linux-android- \
+            CROSS_COMPILE_ARM32=$GCCDIR32/bin/arm-linux-androideabi- \
+            CLANG_TRIPLE=aarch64-linux-gnu-"
+
+          make ${args} erhai_config
+
+          make ${args} -j4
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4

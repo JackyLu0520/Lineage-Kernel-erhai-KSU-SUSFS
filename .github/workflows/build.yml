@@ -48,6 +48,14 @@ jobs:
           path: sm8750-modules
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
+      
+      - name: Checkout sm8750-devicetrees
+        uses: actions/checkout@v7
+        with:
+          repository: LineageOS/android_kernel_oneplus_sm8750-devicetrees
+          path: sm8750-devicetrees
+          fetch-depth: 0
+          ref: lineage-${{github.event.inputs.LineageOS_Version}}
 
       - name: Init
         run: |

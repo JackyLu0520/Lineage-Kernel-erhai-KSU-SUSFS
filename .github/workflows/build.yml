@@ -84,6 +84,7 @@ jobs:
 
       - name: Fix certs/extract-cert.c(Temporarily?)
         run: |
+          ls -la kernel/certs/
           unifdef -DUSE_PKCS11_ENGINE kernel/certs/extract-cert.c -o kernel/certs/extract-cert.c
       
       - name: Build Kernel

@@ -78,9 +78,14 @@ jobs:
           fetch-depth: 0
           ref: lineage-${{github.event.inputs.LineageOS_Version}}
 
-      # - name: Fix kernel/sched/walt/walt_halt.c(Temporarily?)
-      #   run: |
-      #     sed -i 's/#include <walt.h>/#include "walt.h"/' kernel/kernel/sched/walt/walt_halt.c
+      - name: Fix kernel/sched/walt/walt_halt.c(Temporarily?)
+        run: |
+          sed -i 's/#include <walt.h>/#include "walt.h"/' kernel/kernel/sched/walt/walt_halt.c
+
+      - name: Fix certs/extract-cert.c(Temporarily?)
+        run: |
+          sudo apt install unifdef
+          unifdef -DUSE_PKCS11_ENGINE kernel/certs/extract-cert.c
       
       - name: Build Kernel
         run: |
